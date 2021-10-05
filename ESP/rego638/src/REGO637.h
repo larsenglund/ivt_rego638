@@ -16,8 +16,10 @@
 #define _REGO637_03022019
 
 #include <HardwareSerial.h>
-#include <SoftwareSerial.h>
+//#include <SoftwareSerial.h>
 #include "Arduino.h"
+
+#define DEBUG_SERIAL Serial1
 
 #define REGO_MSG_TOUT               2000ul   //2000mS timeout waiting for reply from heatpump
 
@@ -109,7 +111,7 @@ class Rego637
 
 public:
     Rego637( HardwareSerial &sp ) {_hwRegoPort = &sp;}
-    Rego637( SoftwareSerial &sp ) {_swRegoPort = &sp;}
+//    Rego637( SoftwareSerial &sp ) {_swRegoPort = &sp;}
 
     ~Rego637(){;}
 
@@ -145,7 +147,7 @@ private:
 
     Stream          *_RegoStream;
     HardwareSerial  *_hwRegoPort;
-    SoftwareSerial  *_swRegoPort;
+//    SoftwareSerial  *_swRegoPort;
 
 };//class Rego637
 

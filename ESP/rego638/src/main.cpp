@@ -1,12 +1,16 @@
 #include <Arduino.h>
 #include "REGO637.h"
 
+#include <HardwareSerial.h>
+
+HardwareSerial MySerial(1);
+
 #define NUM_SENSORS 11
 #define NUM_DEVICES 8
 #define NUM_CONTROLDATA 7
 #define NUM_SETTINGS 22
 
-int readtoggle = 1;
+int readtoggle = 0;
 
 const uint16_t RegsControlData[NUM_CONTROLDATA] =
     {
@@ -144,7 +148,7 @@ const char *SettingNames[NUM_SETTINGS] =
 
 };
 
-Rego637 Heatpump(Serial);
+Rego637 Heatpump(MySerial);
 
 byte
     nSensors;
@@ -163,9 +167,9 @@ void CheckPumpSettingMessage( void );
 void setup()
 {
   // put your setup code here, to run once:
-  Serial1.begin(115200);
+  DEBUG_SERIAL.begin(115200);
 
-  Serial1.println("Setting up heatpump..");
+  DEBUG_SERIAL.println("Setting up heatpump..");
   Heatpump.start(19200);
 
   nSensors = 0;
@@ -229,9 +233,9 @@ void CheckPumpSensorMessage( void )
         case    MSG_COMPLETE:
             //message is complete; print what was received
             Heatpump.ClrMsgStatus();
-            Serial1.print( SensorNames[nSensors] );
-            Serial1.print( (float)sensorval/10.0, 1 );       //<-- change to display oC
-            Serial1.println( "o C" );
+            DEBUG_SERIAL.print( SensorNames[nSensors] );
+            DEBUG_SERIAL.print( (float)sensorval/10.0, 1 );       //<-- change to display oC
+            DEBUG_SERIAL.println( "o C" );
             nSensors++;
             if( nSensors == NUM_SENSORS )
             {
@@ -249,8 +253,8 @@ void CheckPumpSensorMessage( void )
         default:
             //something else is going on; print verbose message of what the problem is
             //print a message to the monitor identifying the error
-            Serial1.print( "Message error.....: " );
-            Serial1.println( RegoErrorMsgs[chkRtn] );
+            DEBUG_SERIAL.print( "Message error.....: " );
+            DEBUG_SERIAL.println( RegoErrorMsgs[chkRtn] );
             
         break;
             
@@ -272,8 +276,8 @@ void CheckPumpDeviceMessage( void )
         case    MSG_COMPLETE:
             //message is complete; print what was received
             Heatpump.ClrMsgStatus();
-            Serial1.print( DeviceNames[nDevices] );
-            Serial1.println( deviceval );       //<-- change to display oC
+            DEBUG_SERIAL.print( DeviceNames[nDevices] );
+            DEBUG_SERIAL.println( deviceval );       //<-- change to display oC
              nDevices++;
             if( nDevices == NUM_DEVICES )
             {
@@ -291,8 +295,8 @@ void CheckPumpDeviceMessage( void )
         default:
             //something else is going on; print verbose message of what the problem is
             //print a message to the monitor identifying the error
-            Serial1.print( "Message error.....: " );
-            Serial1.println( RegoErrorMsgs[chkRtn] );
+            DEBUG_SERIAL.print( "Message error.....: " );
+            DEBUG_SERIAL.println( RegoErrorMsgs[chkRtn] );
             
         break;
             
@@ -314,9 +318,9 @@ void CheckPumpControlDataMessage( void )
         case    MSG_COMPLETE:
             //message is complete; print what was received
             Heatpump.ClrMsgStatus();
-            Serial1.print( ControlDataNames[nControlData] );
-            Serial1.print( (float)controldataval/10.0, 1 );       //<-- change to display oC
-            Serial1.println( "o C" );
+            DEBUG_SERIAL.print( ControlDataNames[nControlData] );
+            DEBUG_SERIAL.print( (float)controldataval/10.0, 1 );       //<-- change to display oC
+            DEBUG_SERIAL.println( "o C" );
             nControlData++;
             if( nControlData == NUM_CONTROLDATA )
             {
@@ -334,8 +338,8 @@ void CheckPumpControlDataMessage( void )
         default:
             //something else is going on; print verbose message of what the problem is
             //print a message to the monitor identifying the error
-            Serial1.print( "Message error.....: " );
-            Serial1.println( RegoErrorMsgs[chkRtn] );
+            DEBUG_SERIAL.print( "Message error.....: " );
+            DEBUG_SERIAL.println( RegoErrorMsgs[chkRtn] );
             
         break;
             
@@ -357,9 +361,9 @@ void CheckPumpSettingMessage( void )
         case    MSG_COMPLETE:
             //message is complete; print what was received
             Heatpump.ClrMsgStatus();
-            Serial1.print( SettingNames[nSettings] );
-            Serial1.print( (float)settingsval/10.0, 1 );       //<-- change to display oC
-            Serial1.println( "o C" );
+            DEBUG_SERIAL.print( SettingNames[nSettings] );
+            DEBUG_SERIAL.print( (float)settingsval/10.0, 1 );       //<-- change to display oC
+            DEBUG_SERIAL.println( "o C" );
             nSettings++;
             if( nSettings == NUM_SETTINGS )
             {
@@ -377,8 +381,8 @@ void CheckPumpSettingMessage( void )
         default:
             //something else is going on; print verbose message of what the problem is
             //print a message to the monitor identifying the error
-            Serial1.print( "Message error.....: " );
-            Serial1.println( RegoErrorMsgs[chkRtn] );
+            DEBUG_SERIAL.print( "Message error.....: " );
+            DEBUG_SERIAL.println( RegoErrorMsgs[chkRtn] );
             
         break;
             

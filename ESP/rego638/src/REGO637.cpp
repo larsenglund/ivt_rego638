@@ -17,16 +17,16 @@ void Rego637::start( uint32_t baudrate )
 {
     if( _hwRegoPort )
     {
-        _hwRegoPort->begin( baudrate );
+        _hwRegoPort->begin( baudrate, SERIAL_8N1, 16, 17 );
         _RegoStream = (Stream *)_hwRegoPort;
 
     }//if
-    else
+    /*else
     {
         _swRegoPort->begin( baudrate );
         _RegoStream = (Stream *)_swRegoPort;
 
-    }//else
+    }*///else
 
     ClrMsgStatus();
 
@@ -249,8 +249,11 @@ uint8_t Rego637::CheckRSettingMessage( int16_t *Value )
 //private stuff///////////////////////////////////////////////////////
 void Rego637::flush( void )
 {
-    while( _RegoStream->available() > 0 )
-        _RegoStream->read();
+    DEBUG_SERIAL.print( "Flushing RX" );
+    while( _RegoStream->available() > 0 ) {
+        DEBUG_SERIAL.print( _RegoStream->read(), HEX );
+    }
+    DEBUG_SERIAL.println();
 
 }//flush
 
@@ -279,15 +282,15 @@ void Rego637::ReadSysReg( uint16_t ReadRegister )
     _TxBuff[8] = checksum;
 
     //debug message showing received message //<-- start here
-    Serial.print( "Tx Bufferz: " );
+     DEBUG_SERIAL.print( "Tx Bufferz: " );
     for( int i=0; i<9; i++ )
     {
         if( _TxBuff[i] < 0x10 )
-            Serial.print( "0" );
-        Serial.print( _TxBuff[i], HEX );
-        Serial.print( " " );
+             DEBUG_SERIAL.print( "0" );
+         DEBUG_SERIAL.print( _TxBuff[i], HEX );
+         DEBUG_SERIAL.print( " " );
     }//for
-    Serial.println("");
+     DEBUG_SERIAL.println("");
     //debug 
 
     //before sending the message, flush the receive buffer
@@ -314,6 +317,10 @@ void Rego637::RxShortMsgSensor( void )
         return;
 
     _RxBuff[_rxIdx] = _RegoStream->read();
+    DEBUG_SERIAL.println();
+    DEBUG_SERIAL.print("RX GOT: ");
+    DEBUG_SERIAL.print( _RxBuff[_rxIdx], HEX );
+    DEBUG_SERIAL.println();
     _rxIdx++;
     if( _rxIdx < 5 )
         return;
@@ -346,15 +353,15 @@ void Rego637::RxShortMsgSensor( void )
     
 
     //debug message showing received message
-    Serial.print( "Rx Buffer: " );
+     DEBUG_SERIAL.print( "Rx Buffer: " );
     for( int i=0; i<5; i++ )
     {
         if( _RxBuff[i] < 0x10 )
-            Serial.print( "0" );
-        Serial.print( _RxBuff[i], HEX );
-        Serial.print( " " );
+             DEBUG_SERIAL.print( "0" );
+         DEBUG_SERIAL.print( _RxBuff[i], HEX );
+         DEBUG_SERIAL.print( " " );
     }//for
-    Serial.println("");
+     DEBUG_SERIAL.println("");
     
     _statusRego = MSG_COMPLETE;
 
@@ -404,15 +411,15 @@ void Rego637::RxShortMsgDevice( void )
     
 
     //debug message showing received message
-    Serial.print( "Rx Buffer: " );
+     DEBUG_SERIAL.print( "Rx Buffer: " );
     for( int i=0; i<5; i++ )
     {
         if( _RxBuff[i] < 0x10 )
-            Serial.print( "0" );
-        Serial.print( _RxBuff[i], HEX );
-        Serial.print( " " );
+             DEBUG_SERIAL.print( "0" );
+         DEBUG_SERIAL.print( _RxBuff[i], HEX );
+         DEBUG_SERIAL.print( " " );
     }//for
-    Serial.println("");
+     DEBUG_SERIAL.println("");
     
     _statusRego = MSG_COMPLETE;
 
@@ -462,15 +469,15 @@ void Rego637::RxShortMsgControlData( void )
     
 
     //debug message showing received message
-    Serial.print( "Rx Buffer: " );
+     DEBUG_SERIAL.print( "Rx Buffer: " );
     for( int i=0; i<5; i++ )
     {
         if( _RxBuff[i] < 0x10 )
-            Serial.print( "0" );
-        Serial.print( _RxBuff[i], HEX );
-        Serial.print( " " );
+             DEBUG_SERIAL.print( "0" );
+         DEBUG_SERIAL.print( _RxBuff[i], HEX );
+         DEBUG_SERIAL.print( " " );
     }//for
-    Serial.println("");
+     DEBUG_SERIAL.println("");
     
     _statusRego = MSG_COMPLETE;
 
@@ -520,15 +527,15 @@ void Rego637::RxShortMsgRSetting( void )
     
 
     //debug message showing received message
-    Serial.print( "Rx Buffer: " );
+     DEBUG_SERIAL.print( "Rx Buffer: " );
     for( int i=0; i<5; i++ )
     {
         if( _RxBuff[i] < 0x10 )
-            Serial.print( "0" );
-        Serial.print( _RxBuff[i], HEX );
-        Serial.print( " " );
+             DEBUG_SERIAL.print( "0" );
+         DEBUG_SERIAL.print( _RxBuff[i], HEX );
+         DEBUG_SERIAL.print( " " );
     }//for
-    Serial.println("");
+     DEBUG_SERIAL.println("");
     
     _statusRego = MSG_COMPLETE;
 
